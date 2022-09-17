@@ -1,0 +1,33 @@
+{
+  "name": "scrollobserver",
+  "version": "1.0.0",
+  "description": "A performant scroll observer without event listeners. Based on [IntersectionObserver API](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API). Injects invisible marks in the DOM and triggers user defined callbacks.",
+  "main": "ScrollObserver.js",
+  "directories": {
+    "www": "www",
+    "src": "src"
+  },
+  "scripts": {
+    "build": "npx gulp",
+    "watch": "npx gulp watch",
+    "serve": "npx http-server ./www -p 0 -c-1",
+    "lint:js": "npx eslint src/**",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.19.1",
+    "@babel/plugin-proposal-export-default-from": "^7.18.10",
+    "@babel/preset-env": "^7.19.1",
+    "eslint": "^8.23.1",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "gulp": "^4.0.2",
+    "gulp-babel": "^8.0.0",
+    "gulp-sourcemaps": "^3.0.0",
+    "gulp-uglify": "^3.0.2",
+    "http-server": "^14.1.1"
+  }
+}
