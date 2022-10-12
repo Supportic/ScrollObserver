@@ -9,12 +9,12 @@ const convertNumberToFloatingPoint = (step) => {
 };
 
 /**
-   * Creates threshold steps for the observer.
-   * @param {string} oneStep
-   * @param {string} excludeZero
-   * @returns {number[]}
-   * @memberof ScrollObserver
-   */
+ * Creates threshold steps for the observer.
+ * @param {string} oneStep
+ * @param {string} excludeZero
+ * @returns {number[]}
+ * @memberof ScrollObserver
+ */
 const createSteps = (step) => {
   let oneStep = step ?? 0.25;
 
@@ -72,12 +72,16 @@ export default class ScrollObserver {
               this.#triggerFunctions,
             )) {
               // only trigger when we are scrolling, otherwise it's pageload
-              if (Number(percent) === scrollDepth
-              && (this.#isScrollingDown || this.#isScrollingUp)) {
+              if (
+                Number(percent) === scrollDepth
+                && (this.#isScrollingDown || this.#isScrollingUp)
+              ) {
                 fns.forEach((fn) => fn({
                   depth: threshold,
                   // current: currentScrollPercentage.rounded,
-                  state: this.#isScrollingDown ? 'scrolling down' : 'scrolling up',
+                  state: this.#isScrollingDown
+                    ? 'scrolling down'
+                    : 'scrolling up',
                 }));
               }
             }
@@ -99,7 +103,9 @@ export default class ScrollObserver {
 
     this.#setRelativeStyle();
 
-    if (this.#options.showRootMargin) { this.#showRootMargin(); }
+    if (this.#options.showRootMargin) {
+      this.#showRootMargin();
+    }
   };
 
   // Set target position to relative to position makers absolute, if main body just set style, otherwise use wrapper
@@ -192,8 +198,8 @@ export default class ScrollObserver {
     const st = 'scrollTop';
     const sh = 'scrollHeight';
 
-    let depth; let
-      scrollTop;
+    let depth;
+    let scrollTop;
 
     let h = document.documentElement;
     const b = document.body;
@@ -224,7 +230,9 @@ export default class ScrollObserver {
   // exposed the the user
   observe = (thresholds, fn) => {
     // transform to array if necessary
-    const thresholdsArr = !Array.isArray(thresholds) ? Array.of(thresholds) : thresholds;
+    const thresholdsArr = !Array.isArray(thresholds)
+      ? Array.of(thresholds)
+      : thresholds;
 
     const currentScrollPercentage = this.#getCurrentScrollPercentage();
 
@@ -366,7 +374,7 @@ export default class ScrollObserver {
       /** sets the area margin when to trigger the thresholds,
        * positive values shifts the detection area outside the screen
        * to trigger callbacks earlier before they enter the viewport
-      */
+       */
       rootMargin: '0px 0px 0px 0px',
       /**
        * These are the measure points, they will trigger the callbacks when the threshold entered the viewport.
