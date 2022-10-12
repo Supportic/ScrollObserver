@@ -1,7 +1,7 @@
 /* eslint-disable import/extensions,no-unused-vars */
 
-// import ScrollObserver from './ScrollObserver.js';
-import ScrollTracker from './ScrollTracker.js';
+import ScrollObserver from './ScrollObserver.js';
+// import ScrollTracker from './ScrollTracker.js';
 
 const getCurrentScrollPercentage = () => {
   const st = 'scrollTop';
@@ -33,44 +33,42 @@ const setUI = (depthInfo) => {
 function main() {
   window.dataLayer = window.dataLayer || [];
 
-  // const scrollObserver = new ScrollObserver({
-  //   thresholds: '0.25',
-  //   // triggerOnce: true,
-  //   triggerPrevious: true,
-  //   showMarkers: true,
-  // });
-
-  // // setUI({ state: 'page loaded' });
-
-  // scrollObserver.observe([25, 50], (depthInfo) => {
-  //   setUI(depthInfo);
-  //   window.dataLayer.push({
-  //     depth: depthInfo.depth,
-  //   });
-  // });
-  // scrollObserver.observe(75, (depthInfo) => {
-  //   setUI(depthInfo);
-  //   window.dataLayer.push({
-  //     depth: depthInfo.depth,
-  //   });
-  // });
-
-  const scrollTracker = new ScrollTracker({
-    triggerOnce: true,
+  const scrollObserver = new ScrollObserver({
+    thresholds: '0.25',
+    // triggerOnce: true,
     triggerPrevious: true,
+    showMarkers: true,
   });
-  scrollTracker.observe(20, (depthInfo) => {
+
+  scrollObserver.observe([25, 50], (depthInfo) => {
     setUI(depthInfo);
     window.dataLayer.push({
       depth: depthInfo.depth,
     });
   });
-  scrollTracker.observe(60, (depthInfo) => {
+  scrollObserver.observe(75, (depthInfo) => {
     setUI(depthInfo);
     window.dataLayer.push({
       depth: depthInfo.depth,
     });
   });
+
+  // const scrollTracker = new ScrollTracker({
+  //   triggerOnce: true,
+  //   triggerPrevious: true,
+  // });
+  // scrollTracker.observe(20, (depthInfo) => {
+  //   setUI(depthInfo);
+  //   window.dataLayer.push({
+  //     depth: depthInfo.depth,
+  //   });
+  // });
+  // scrollTracker.observe(60, (depthInfo) => {
+  //   setUI(depthInfo);
+  //   window.dataLayer.push({
+  //     depth: depthInfo.depth,
+  //   });
+  // });
 }
 
 function contentLoadedHandler(evt) {
