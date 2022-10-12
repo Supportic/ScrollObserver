@@ -42,8 +42,8 @@ export default class ScrollObserver {
   // ignore setting it on page load
   #lastScrollPercentage = 'init';
 
-  isScrollingUp = true;
-  isScrollingDown = !this.isScrollingUp;
+  #isScrollingDown = false;
+  #isScrollingUp = false;
 
   constructor(options) {
     this.#init(options);
@@ -58,11 +58,12 @@ export default class ScrollObserver {
 
     this.#observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
-        if (entry.isIntersecting) {
+        if (entry.isIntersecting && entry.intersectionRatio === 1) {
           // from the element in the DOM
           const scrollDepth = parseFloat(entry.target.dataset.threshold);
           const threshold = scrollDepth * 100;
           const canInteract = scrollDepth >= this.#options.interactWhen;
+          // const currentScrollPercentage = this.#getCurrentScrollPercentage();
 
           this.#setScrollDirection();
 
@@ -70,8 +71,14 @@ export default class ScrollObserver {
             for (const [percent, fns] of Object.entries(
               this.#triggerFunctions,
             )) {
-              if (Number(percent) === scrollDepth) {
-                fns.forEach((fn) => fn(threshold));
+              // only trigger when we are scrolling, otherwise it's pageload
+              if (Number(percent) === scrollDepth
+              && (this.#isScrollingDown || this.#isScrollingUp)) {
+                fns.forEach((fn) => fn({
+                  depth: threshold,
+                  // current: currentScrollPercentage.rounded,
+                  state: this.#isScrollingDown ? 'scrolling down' : 'scrolling up',
+                }));
               }
             }
           }
@@ -164,9 +171,11 @@ export default class ScrollObserver {
     const currentScrollPercentage = this.#getCurrentScrollPercentage().rounded;
     if (typeof this.#lastScrollPercentage === 'number') {
       if (currentScrollPercentage < this.#lastScrollPercentage) {
-        this.isScrollingUp = false;
+        this.#isScrollingDown = false;
+        this.#isScrollingUp = true;
       } else {
-        this.isScrollingUp = true;
+        this.#isScrollingDown = true;
+        this.#isScrollingUp = false;
       }
     }
     this.#lastScrollPercentage = currentScrollPercentage;
@@ -212,11 +221,12 @@ export default class ScrollObserver {
   };
 
   // registers a callback function which should trigger at a percentage
+  // exposed the the user
   observe = (thresholds, fn) => {
     // transform to array if necessary
     const thresholdsArr = !Array.isArray(thresholds) ? Array.of(thresholds) : thresholds;
 
-    const currentScrollPercentage = this.#getCurrentScrollPercentage().value;
+    const currentScrollPercentage = this.#getCurrentScrollPercentage();
 
     for (const threshold of thresholdsArr) {
       const step = convertNumberToFloatingPoint(threshold);
@@ -224,9 +234,13 @@ export default class ScrollObserver {
       // trigger callbacks already when scroll depth is above threshold on pageload
       if (
         this.#options.triggerPrevious
-        && Number(step) * 100 < currentScrollPercentage
+        && Number(step) * 100 <= currentScrollPercentage.rounded
       ) {
-        fn(Number(step) * 100);
+        fn({
+          depth: Number(step) * 100,
+          // current: currentScrollPercentage.rounded,
+          state: 'page loaded',
+        });
 
         // eslint-disable-next-line no-continue
         if (this.#options.triggerOnce) continue;
